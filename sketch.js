@@ -162,8 +162,13 @@ function draw() {
 
       noFill();
       stroke(230 + random(25));
-      //strokeColor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
-      //stroke(strokeColor);
+
+      redStroke = int(random(170, 200));
+      greenStroke = int(random(160));
+      blueStroke = int(random(190, 255));
+
+      strokeColor = `rgba(${redStroke},${greenStroke},${blueStroke},${backgroundFade})`;
+      stroke(strokeColor);
       //
       //strokeWeight(20/sqrt(i+1));
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
