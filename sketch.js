@@ -1,11 +1,58 @@
 function setup() {
-  createCanvas(1366, 768);
-  frameRate(20);
+  createCanvas(1376, 778);
+  frameRate(10);
   background('rgb(5,5,5)');
-  numrows = 10;
-  numcols = 32;
+  numrows = 30;
+  numcols = 128;
   squareres = 12;
   radius = 62;
+  startDensity = 0.0005;
+  backgroundFade = '0.3';
+
+  // Step
+  survivalRule=[0,1,2,3];
+  genesisRule= [0,4,5];
+
+  // Step2
+  survivalRule=[0,1,2,3];
+  genesisRule= [0,4,1];
+
+  // Step3
+  survivalRule=[0,1,2,3];
+  genesisRule= [0,4,2];
+
+  // DiscoCrystal
+  startDensity = 0.002;
+  survivalRule=[1];
+  genesisRule= [1];
+
+
+  // Assimilation
+  startDensity = 0.25;
+  genesisRule= [3,4,5];
+  survivalRule=[4,5,6,7];
+
+  // Assimilation
+  startDensity = 0.02;
+  genesisRule= [2,5];
+  survivalRule=[2,3,6];
+
+  // Assimilation
+  startDensity = 0.0002;
+  backgroundFade = '0.5';
+  genesisRule= [1];
+  survivalRule=[2,3,4];
+
+  // Classic
+  startDensity = 0.2;
+  genesisRule=[3];
+  survivalRule= [2,3];
+
+  // DiscoCrystal
+  startDensity = 0.002;
+  genesisRule= [1];
+  survivalRule=[1];
+
 
   random_radiuses =[];
   for (let i = 0, len = numrows; i < len; i++) {
@@ -33,7 +80,7 @@ function setup() {
   for (let i = 0, len3 = numrows; i < len3; i++) {
     currentMatrix.push([]);
     for (let j = 0, len4 = numcols; j < len4; j++) {
-      if (random(1)<0.2) {
+      if (random(1)<startDensity) {
         currentMatrix[i].push(1);
       } else {
         currentMatrix[i].push(0);
@@ -53,11 +100,33 @@ function countNeighbours(matrix, x, y) {
   return (matrix[((x -1 + numrows) % numrows)][((y - 1 + numcols) % numcols)] + matrix[((x -1 +numrows) % numrows)][y]+ matrix[((x -1 +numrows) % numrows)][((y + 1) % numcols)]+ matrix[x][((y - 1 + numcols) % numcols)]+ matrix[x][((y + 1) % numcols)]+ matrix[((x +1) % numrows)][((y - 1 +numcols) % numcols)]+ matrix[((x +1) % numrows)][y]+ matrix[((x +1) % numrows)][((y + 1) % numcols)])
 }
 
+function checkGenesisRules(matrixElement, neiboughboursCount, genesisRule) {
+  genesisTrial = false;
+  for (let k = 0, len = genesisRule.length; k < len; k++) {
+    genesisTrial = genesisTrial || (neiboughboursCount == genesisRule[k]);
+  }
+  return genesisTrial;
+}
+
+function checkSurvivalRules(matrixElement, neiboughboursCount, survivalRule) {
+  survivalTrial = false;
+  for (let l = 0, len = survivalRule.length; l < len; l++) {
+    survivalTrial = survivalTrial || (neiboughboursCount == survivalRule[l]);
+  }
+  survivalTrial = (matrixElement == 1 && survivalTrial);
+  return survivalTrial;
+}
+
 function draw() {
 
   //clear();
 
-  background('rgba(5,5,5,0.05)');
+  cred = int(random(225, 255));
+  cgreen = int(random(120));
+  cblue = int(random(160, 255));
+  currentcolor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
+  currentcolor = `rgba(5,5,5,${backgroundFade})`;
+  background(currentcolor);
 
   for (let i = 0, len = currentMatrix.length; i < len; i++) {
     for (let j = 0, len2 = currentMatrix[i].length; j < len2; j++) {
@@ -65,13 +134,12 @@ function draw() {
 
       nextMatrix[i][j] = 0;
 
-      if (neiboughboursCount == 3 || neiboughboursCount == 7) {
+      if (checkGenesisRules(currentMatrix[i][j], neiboughboursCount, genesisRule)) {
         nextMatrix[i][j] = 1;
       };
-
-      if ((neiboughboursCount == 1 || neiboughboursCount == 2 || neiboughboursCount == 3|| neiboughboursCount == 4 ) && (currentMatrix[i][j] == 1)) {
-        nextMatrix[i][j]=1;
-      }
+      if (checkSurvivalRules(currentMatrix[i][j], neiboughboursCount, survivalRule)) {
+        nextMatrix[i][j] = 1;
+      };
 
 
 
@@ -85,7 +153,9 @@ function draw() {
       //rect(squareres*i, squareres*j, squareres, squareres);
 
       noFill();
-      stroke(230 + random(25));
+      //stroke(230 + random(25));
+      strokeColor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
+      stroke(strokeColor);
       //strokeWeight(20/sqrt(i+1));
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
 
