@@ -1,8 +1,8 @@
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(1000,1000);
   //frameRate(1);
-  numrows = 50;
-  numcols = 50;
+  numrows = 10;
+  numcols = 40;
   squareres = 12;
   currentMatrix = [];
   for (let i = 0, len3 = numrows; i < len3; i++) {
@@ -25,6 +25,9 @@ function countNeighbours(matrix, x, y) {
 }
 
 function draw() {
+
+  clear();
+
 
   for (let i = 0, len = currentMatrix.length; i < len; i++) {
     for (let j = 0, len2 = currentMatrix[i].length; j < len2; j++) {
@@ -49,7 +52,15 @@ function draw() {
       } else {
         fill(255);
       };
-      rect(squareres*i, squareres*j, squareres, squareres);
+      //rect(squareres*i, squareres*j, squareres, squareres);
+
+      noFill();
+      stroke(0);
+      strokeWeight(20);
+
+      if (currentMatrix[i][j] == 1) {
+        arc(300, 300, 40*(i+1), 40*(i+1), j*2*PI/numcols, (j+1)*2*PI/numcols);
+      }
     }
   }
 
