@@ -8,6 +8,8 @@ function setup() {
   radius = 62;
   startDensity = 0.0005;
   backgroundFade = '0.3';
+  RANDOM_CENTER_DISPLACEMENT_X=10;
+  RANDOM_CENTER_DISPLACEMENT_Y=10;
 
   // Step
   survivalRule=[0,1,2,3];
@@ -43,6 +45,7 @@ function setup() {
   genesisRule= [1];
   survivalRule=[2,3,4];
 
+
   // Classic
   startDensity = 0.2;
   genesisRule=[3];
@@ -52,7 +55,6 @@ function setup() {
   startDensity = 0.002;
   genesisRule= [1];
   survivalRule=[1];
-
 
   random_radiuses =[];
   for (let i = 0, len = numrows; i < len; i++) {
@@ -68,6 +70,12 @@ function setup() {
   for (let i = 0, len = numrows; i < len; i++) {
     random_rotations.push(random(2*i*PI/(8*numrows)));
   }
+
+  random_centers =[];
+  for (let i = 0, len = numrows; i < len; i++) {
+    random_centers.push( { x: random(RANDOM_CENTER_DISPLACEMENT_X)-RANDOM_CENTER_DISPLACEMENT_X, y: random(RANDOM_CENTER_DISPLACEMENT_Y)-RANDOM_CENTER_DISPLACEMENT_Y } );
+  }
+  console.log(random_centers);
 
   currentMatrix = [];
   for (let i = 0, len3 = numrows; i < len3; i++) {
@@ -121,9 +129,9 @@ function draw() {
 
   //clear();
 
-  cred = int(random(225, 255));
-  cgreen = int(random(120));
-  cblue = int(random(160, 255));
+  cred = int(random(240, 255));
+  cgreen = int(random(160));
+  cblue = int(random(225, 255));
   currentcolor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
   currentcolor = `rgba(5,5,5,${backgroundFade})`;
   background(currentcolor);
@@ -145,22 +153,23 @@ function draw() {
 
 
 
-      if (currentMatrix[i][j] == 1) {
-        fill(0);
-      } else {
-        fill(255);
-      };
+//      if (currentMatrix[i][j] == 1) {
+//        fill(0);
+//      } else {
+//        fill(255);
+//      };
       //rect(squareres*i, squareres*j, squareres, squareres);
 
       noFill();
-      //stroke(230 + random(25));
-      strokeColor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
-      stroke(strokeColor);
+      stroke(230 + random(25));
+      //strokeColor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
+      //stroke(strokeColor);
+      //
       //strokeWeight(20/sqrt(i+1));
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
 
       if (currentMatrix[i][j] == 1) {
-        arc(682, 359, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + random_rotations[i], (j+0.9)*2*PI/numcols + random_rotations[i]);
+        arc(682+random_centers[i].x, 359+random_centers[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + random_rotations[i], (j+0.9)*2*PI/numcols + random_rotations[i]);
       }
     }
   }
@@ -171,6 +180,11 @@ function draw() {
 
   for (let i = 0, len = numrows; i < len; i++) {
     random_rotations[i]+= random((i/5)*2*PI/(512*numrows));
+  }
+
+  for (let i = 0, len = numrows; i < len; i++) {
+    random_centers[i].x+= random(0.2* RANDOM_CENTER_DISPLACEMENT_X) - 0.1 * RANDOM_CENTER_DISPLACEMENT_X;
+    random_centers[i].y+= random(0.2* RANDOM_CENTER_DISPLACEMENT_Y) - 0.1 * RANDOM_CENTER_DISPLACEMENT_Y;
   }
 
 
