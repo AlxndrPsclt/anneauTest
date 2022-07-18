@@ -1,81 +1,52 @@
 function setup() {
+
+  // Library setup
   createCanvas(1376, 778);
-  console.log(window);
   frameRate(10);
+  colorMode(HSB);
+
+  // Global image setup
   background('rgb(5,5,5)');
+
+
+  // Game of life display setup
   numrows = 30;
   numcols = 128;
-  squareres = 12;
+  // squareres = 12; // Used for classic matrix display; currently not maintained
   radius = 62;
+
+  // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
-  backgroundFade = '0.3';
+  backgroundFade = '0.1';
+  refreshColor = `rgba(5,5,5,${backgroundFade})`;
   RANDOM_CENTER_DISPLACEMENT_X=10;
   RANDOM_CENTER_DISPLACEMENT_Y=10;
 
-  // Step
-  survivalRule=[0,1,2,3];
-  genesisRule= [0,4,5];
 
-  // Step2
-  survivalRule=[0,1,2,3];
-  genesisRule= [0,4,1];
+  // CONFIGS
 
-  // Step3
-  survivalRule=[0,1,2,3];
-  genesisRule= [0,4,2];
-
-  // DiscoCrystal
-  startDensity = 0.002;
-  survivalRule=[1];
-  genesisRule= [1];
-
-
-  // Assimilation
-  startDensity = 0.02;
-  genesisRule= [2,5];
-  survivalRule=[2,3,6];
-
-  // Assimilation
-  startDensity = 0.0002;
-  backgroundFade = '0.5';
-  genesisRule= [1];
-  survivalRule=[2,3,4];
-
-
-
-
-  // Classic
-  startDensity = 0.2;
-  genesisRule=[3];
-  survivalRule= [2,3];
-
-  // DiscoCrystal
-  startDensity = 0.002;
-  genesisRule= [1];
-  survivalRule=[1];
-
-  // Assimilation
-  startDensity = 0.18;
-  genesisRule= [3,4,5];
-  survivalRule=[4,5,6,7];
-
-  // Classic
-  startDensity = 0.2;
-  genesisRule=[3];
-  survivalRule= [2,3];
-
-
-
-
+  // Classic configs
   Classic = { startDensity: 0.2, genesisRule: [3], survivalRule: [2,3] };
-  Experiment626 = { startDensity : 0.008, genesisRule: [1,4], survivalRule: [2] };
   DiscoCrystal = { startDensity : 0.002, genesisRule: [1], survivalRule: [1] };
 
-  configs = { "DiscoCrystal": DiscoCrystal, "Classic": Classic, "Experiment626": Experiment626 };
+  // Experimental configs
+  MasseImpact5 = { genesisRule: [0,4,5], survivalRule: [0,1,2,3] };
+  MasseImpact1 = { genesisRule: [0,4,1], survivalRule: [0,1,2,3] };
+  MasseImpact2 = { genesisRule: [0,4,2], survivalRule: [0,1,2,3] };
+
+  Assimilation = { startDensity: 0.02, genesisRule: [2,5], survivalRule: [2,3,6] };
+  Dissilation = { startDensity: 0.0002, backgroundFade: '0.5', genesisRule: [1], survivalRule: [2,3,4] };
+
+  Reject = { startDensity: 0.18, genesisRule: [3,4,5], survivalRule: [4,5,6,7] };
+  Experiment626 = { startDensity : 0.008, genesisRule: [1,4], survivalRule: [2] };
+
+  configs = { DiscoCrystal, Classic, Experiment626, Reject, Assimilation, Dissilation, MasseImpact5, MasseImpact1, MasseImpact2 };
   currentConfig = "Classic";
+  currentConfig = "DiscoCrystal";
 
   loadConfig(currentConfig);
 
+  // Randomness arrays generation
   random_radiuses =[];
   for (let i = 0, len = numrows; i < len; i++) {
     random_radiuses.push(random(10)+random(log(100000*i)));
@@ -95,33 +66,27 @@ function setup() {
   for (let i = 0, len = numrows; i < len; i++) {
     random_centers.push( { x: random(RANDOM_CENTER_DISPLACEMENT_X)-RANDOM_CENTER_DISPLACEMENT_X, y: random(RANDOM_CENTER_DISPLACEMENT_Y)-RANDOM_CENTER_DISPLACEMENT_Y } );
   }
-  console.log(random_centers);
 
+  // Initialise to random matrix
   currentMatrix = [];
-  for (let i = 0, len3 = numrows; i < len3; i++) {
+  for (let i = 0, len = numrows; i < len; i++) {
     currentMatrix.push([]);
-    for (let j = 0, len4 = numcols; j < len4; j++) {
-      currentMatrix[i].push(random([0,1]));
-    } 
-  }
-  currentMatrix = [];
-  for (let i = 0, len3 = numrows; i < len3; i++) {
-    currentMatrix.push([]);
-    for (let j = 0, len4 = numcols; j < len4; j++) {
+    for (let j = 0, len2 = numcols; j < len2; j++) {
       if (random(1)<startDensity) {
         currentMatrix[i].push(1);
       } else {
         currentMatrix[i].push(0);
       }
     } 
-  }
+  };
+
   nextMatrix = [];
   for (let i = 0, len5 = numrows; i < len5; i++) {
     nextMatrix.push([]);
     for (let j = 0, len6 = numcols; j < len6; j++) {
       nextMatrix[i].push(0);
     } 
-  }
+  };
 }
 
 function loadConfig(configName) {
@@ -137,75 +102,54 @@ function countNeighbours(matrix, x, y) {
   return (matrix[((x -1 + numrows) % numrows)][((y - 1 + numcols) % numcols)] + matrix[((x -1 +numrows) % numrows)][y]+ matrix[((x -1 +numrows) % numrows)][((y + 1) % numcols)]+ matrix[x][((y - 1 + numcols) % numcols)]+ matrix[x][((y + 1) % numcols)]+ matrix[((x +1) % numrows)][((y - 1 +numcols) % numcols)]+ matrix[((x +1) % numrows)][y]+ matrix[((x +1) % numrows)][((y + 1) % numcols)])
 }
 
-function checkGenesisRules(neiboughboursCount, genesisRule) {
-  genesisTrial = false;
-  for (let k = 0, len = genesisRule.length; k < len; k++) {
-    genesisTrial = genesisTrial || (neiboughboursCount == genesisRule[k]);
+function checkRules(neighboursCount, rules) {
+  trial = false;
+  for (let k = 0, len = rules.length; k < len; k++) {
+    trial = trial || (neighboursCount == genesisRule[k]);
   }
-  return genesisTrial;
+  return trial;
 }
 
-function checkSurvivalRules(neiboughboursCount, survivalRule) {
-  survivalTrial = false;
-  for (let l = 0, len = survivalRule.length; l < len; l++) {
-    survivalTrial = survivalTrial || (neiboughboursCount == survivalRule[l]);
-  }
-  return survivalTrial;
-}
 
 function draw() {
 
   //clear();
-  if(frameCount > 20) {
-    loadConfig('DiscoCrystal');
-  }
+  //if(frameCount > 20) {
+  //  loadConfig('DiscoCrystal');
+  //}
 
-  
-
-  cred = int(random(150, 255));
-  cgreen = int(random(160));
-  cblue = int(random(170, 255));
-  currentcolor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
-  currentcolor = `rgba(5,5,5,${backgroundFade})`;
-  background(currentcolor);
+  background(refreshColor);
+  noFill();
 
   for (let i = 0, len = currentMatrix.length; i < len; i++) {
     for (let j = 0, len2 = currentMatrix[i].length; j < len2; j++) {
-      neiboughboursCount = countNeighbours(currentMatrix, i,j);
 
+      neighboursCount = countNeighbours(currentMatrix, i,j);
+
+      // Checking the Rules of life to create the nextMatrix
       nextMatrix[i][j] = 0;
 
       if (currentMatrix[i][j] == 0) {
-        if (checkGenesisRules(neiboughboursCount, genesisRule)) {
+        if (checkRules(neighboursCount, genesisRule)) {
           nextMatrix[i][j] = 1;
         };
       };
       if (currentMatrix[i][j] == 1) {
-        if (checkSurvivalRules(neiboughboursCount, survivalRule)) {
+        if (checkRules(neighboursCount, survivalRule)) {
           nextMatrix[i][j] = 1;
         };
       };
 
-
-
-
-
-//      if (currentMatrix[i][j] == 1) {
-//        fill(0);
-//      } else {
-//        fill(255);
-//      };
-      //rect(squareres*i, squareres*j, squareres, squareres);
-
-      noFill();
       //stroke(230 + random(25));
 
-      redStroke = int(random(140, 255));
-      greenStroke = int(random(100, 220));
-      blueStroke = int(random(200, 255));
+      cellHue = int(random(10, 230));
+      cellSaturation = int(random(10, 60));
+      cellBrightness = int(random(2, 120));
+      cellAlpha = int(random(2, 10));
 
-      strokeColor = `rgba(${redStroke},${greenStroke},${blueStroke},${backgroundFade})`;
-      stroke(strokeColor);
+      // strokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${backgroundFade})`;
+      // stroke(strokeColor);
+      stroke(cellHue, cellSaturation, cellBrightness, cellAlpha);
       //
       //strokeWeight(20/sqrt(i+1));
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
