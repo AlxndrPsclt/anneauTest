@@ -1,5 +1,6 @@
 function setup() {
   createCanvas(1376, 778);
+  console.log(window);
   frameRate(10);
   background('rgb(5,5,5)');
   numrows = 30;
@@ -30,11 +31,6 @@ function setup() {
 
 
   // Assimilation
-  startDensity = 0.25;
-  genesisRule= [3,4,5];
-  survivalRule=[4,5,6,7];
-
-  // Assimilation
   startDensity = 0.02;
   genesisRule= [2,5];
   survivalRule=[2,3,6];
@@ -46,6 +42,8 @@ function setup() {
   survivalRule=[2,3,4];
 
 
+
+
   // Classic
   startDensity = 0.2;
   genesisRule=[3];
@@ -55,6 +53,28 @@ function setup() {
   startDensity = 0.002;
   genesisRule= [1];
   survivalRule=[1];
+
+  // Assimilation
+  startDensity = 0.18;
+  genesisRule= [3,4,5];
+  survivalRule=[4,5,6,7];
+
+  // Classic
+  startDensity = 0.2;
+  genesisRule=[3];
+  survivalRule= [2,3];
+
+
+
+
+  Classic = { startDensity: 0.2, genesisRule: [3], survivalRule: [2,3] };
+  Experiment626 = { startDensity : 0.008, genesisRule: [1,4], survivalRule: [2] };
+  DiscoCrystal = { startDensity : 0.002, genesisRule: [1], survivalRule: [1] };
+
+  configs = { "DiscoCrystal": DiscoCrystal, "Classic": Classic, "Experiment626": Experiment626 };
+  currentConfig = "Classic";
+
+  loadConfig(currentConfig);
 
   random_radiuses =[];
   for (let i = 0, len = numrows; i < len; i++) {
@@ -104,11 +124,20 @@ function setup() {
   }
 }
 
+function loadConfig(configName) {
+  if (configName in configs) {
+    Object.keys(configs[configName]).forEach(key => {
+      window[key] = configs[configName][key];
+      console.log(`Loading config ${key}.`);
+    })
+  }
+}
+
 function countNeighbours(matrix, x, y) {
   return (matrix[((x -1 + numrows) % numrows)][((y - 1 + numcols) % numcols)] + matrix[((x -1 +numrows) % numrows)][y]+ matrix[((x -1 +numrows) % numrows)][((y + 1) % numcols)]+ matrix[x][((y - 1 + numcols) % numcols)]+ matrix[x][((y + 1) % numcols)]+ matrix[((x +1) % numrows)][((y - 1 +numcols) % numcols)]+ matrix[((x +1) % numrows)][y]+ matrix[((x +1) % numrows)][((y + 1) % numcols)])
 }
 
-function checkGenesisRules(matrixElement, neiboughboursCount, genesisRule) {
+function checkGenesisRules(neiboughboursCount, genesisRule) {
   genesisTrial = false;
   for (let k = 0, len = genesisRule.length; k < len; k++) {
     genesisTrial = genesisTrial || (neiboughboursCount == genesisRule[k]);
@@ -116,22 +145,26 @@ function checkGenesisRules(matrixElement, neiboughboursCount, genesisRule) {
   return genesisTrial;
 }
 
-function checkSurvivalRules(matrixElement, neiboughboursCount, survivalRule) {
+function checkSurvivalRules(neiboughboursCount, survivalRule) {
   survivalTrial = false;
   for (let l = 0, len = survivalRule.length; l < len; l++) {
     survivalTrial = survivalTrial || (neiboughboursCount == survivalRule[l]);
   }
-  survivalTrial = (matrixElement == 1 && survivalTrial);
   return survivalTrial;
 }
 
 function draw() {
 
   //clear();
+  if(frameCount > 20) {
+    loadConfig('DiscoCrystal');
+  }
 
-  cred = int(random(240, 255));
+  
+
+  cred = int(random(150, 255));
   cgreen = int(random(160));
-  cblue = int(random(225, 255));
+  cblue = int(random(170, 255));
   currentcolor = `rgba(${cred},${cgreen},${cblue},${backgroundFade})`;
   currentcolor = `rgba(5,5,5,${backgroundFade})`;
   background(currentcolor);
@@ -142,11 +175,15 @@ function draw() {
 
       nextMatrix[i][j] = 0;
 
-      if (checkGenesisRules(currentMatrix[i][j], neiboughboursCount, genesisRule)) {
-        nextMatrix[i][j] = 1;
+      if (currentMatrix[i][j] == 0) {
+        if (checkGenesisRules(neiboughboursCount, genesisRule)) {
+          nextMatrix[i][j] = 1;
+        };
       };
-      if (checkSurvivalRules(currentMatrix[i][j], neiboughboursCount, survivalRule)) {
-        nextMatrix[i][j] = 1;
+      if (currentMatrix[i][j] == 1) {
+        if (checkSurvivalRules(neiboughboursCount, survivalRule)) {
+          nextMatrix[i][j] = 1;
+        };
       };
 
 
@@ -161,11 +198,11 @@ function draw() {
       //rect(squareres*i, squareres*j, squareres, squareres);
 
       noFill();
-      stroke(230 + random(25));
+      //stroke(230 + random(25));
 
-      redStroke = int(random(170, 200));
-      greenStroke = int(random(160));
-      blueStroke = int(random(190, 255));
+      redStroke = int(random(140, 255));
+      greenStroke = int(random(100, 220));
+      blueStroke = int(random(200, 255));
 
       strokeColor = `rgba(${redStroke},${greenStroke},${blueStroke},${backgroundFade})`;
       stroke(strokeColor);
