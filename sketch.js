@@ -10,17 +10,17 @@ function setup() {
 
 
   // Game of life display setup
-  numrows = 30;
-  numcols = 128;
+  numrows = 20;
+  numcols = 64;
   // squareres = 12; // Used for classic matrix display; currently not maintained
-  radius = 62;
+  radius = 82;
 
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
-  backgroundFade = '0.1';
-  refreshColor = `rgba(5,5,5,${backgroundFade})`;
-  RANDOM_CENTER_DISPLACEMENT_X=10;
-  RANDOM_CENTER_DISPLACEMENT_Y=10;
+  backgroundFade = '0.2';
+  refreshColor = `rgba(2,2,2,${backgroundFade})`;
+  RANDOM_CENTER_DISPLACEMENT_X=30;
+  RANDOM_CENTER_DISPLACEMENT_Y=30;
 
 
   // CONFIGS
@@ -35,14 +35,15 @@ function setup() {
   MasseImpact2 = { genesisRule: [0,4,2], survivalRule: [0,1,2,3] };
 
   Assimilation = { startDensity: 0.02, genesisRule: [2,5], survivalRule: [2,3,6] };
-  Dissilation = { startDensity: 0.0002, backgroundFade: '0.5', genesisRule: [1], survivalRule: [2,3,4] };
+  Dissimilation = { startDensity: 0.000000000002, backgroundFade: '0.5', genesisRule: [1], survivalRule: [2,3,4] };
 
   Reject = { startDensity: 0.18, genesisRule: [3,4,5], survivalRule: [4,5,6,7] };
   Experiment626 = { startDensity : 0.008, genesisRule: [1,4], survivalRule: [2] };
 
-  configs = { DiscoCrystal, Classic, Experiment626, Reject, Assimilation, Dissilation, MasseImpact5, MasseImpact1, MasseImpact2 };
-  currentConfig = "Classic";
+  configs = { DiscoCrystal, Classic, Experiment626, Reject, Assimilation, Dissimilation, MasseImpact5, MasseImpact1, MasseImpact2 };
   currentConfig = "DiscoCrystal";
+  currentConfig = "Classic";
+  currentConfig = "Reject";
 
   loadConfig(currentConfig);
 
@@ -62,9 +63,10 @@ function setup() {
     random_rotations.push(random(2*i*PI/(8*numrows)));
   }
 
-  random_centers =[];
+  rotating_centers =[];
   for (let i = 0, len = numrows; i < len; i++) {
-    random_centers.push( { x: random(RANDOM_CENTER_DISPLACEMENT_X)-RANDOM_CENTER_DISPLACEMENT_X, y: random(RANDOM_CENTER_DISPLACEMENT_Y)-RANDOM_CENTER_DISPLACEMENT_Y } );
+    rotating_centers.push( { x: 0, y: 0 } );
+    //rotating_centers.push( { x: random(RANDOM_CENTER_DISPLACEMENT_X)-RANDOM_CENTER_DISPLACEMENT_X, y: random(RANDOM_CENTER_DISPLACEMENT_Y)-RANDOM_CENTER_DISPLACEMENT_Y } );
   }
 
   // Initialise to random matrix
@@ -81,10 +83,18 @@ function setup() {
   };
 
   nextMatrix = [];
-  for (let i = 0, len5 = numrows; i < len5; i++) {
+  for (let i = 0, len = numrows; i < len; i++) {
     nextMatrix.push([]);
-    for (let j = 0, len6 = numcols; j < len6; j++) {
+    for (let j = 0, len2 = numcols; j < len2; j++) {
       nextMatrix[i].push(0);
+    } 
+  };
+
+  prevMatrix = [];
+  for (let i = 0, len = numrows; i < len; i++) {
+    prevMatrix.push([]);
+    for (let j = 0, len2 = numcols; j < len2; j++) {
+      prevMatrix[i].push(0);
     } 
   };
 }
@@ -105,7 +115,7 @@ function countNeighbours(matrix, x, y) {
 function checkRules(neighboursCount, rules) {
   trial = false;
   for (let k = 0, len = rules.length; k < len; k++) {
-    trial = trial || (neighboursCount == genesisRule[k]);
+    trial = trial || (neighboursCount == rules[k]);
   }
   return trial;
 }
@@ -143,24 +153,29 @@ function draw() {
       //stroke(230 + random(25));
 
       cellHue = int(random(10, 230));
-      cellSaturation = int(random(10, 60));
-      cellBrightness = int(random(2, 120));
+      cellSaturation = int(random(20, 140));
+      cellBrightness = int(random(2, 140));
       cellAlpha = int(random(2, 10));
 
       // strokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${backgroundFade})`;
       // stroke(strokeColor);
-      stroke(cellHue, cellSaturation, cellBrightness, cellAlpha);
+      if (currentMatrix[i][j] == 1 && prevMatrix[i][j] == 0) {
+        stroke(cellHue, cellSaturation, cellBrightness, cellAlpha);
+      } else {
+        stroke(10, cellSaturation / 8, max(50, cellBrightness / 2), cellAlpha / 4);
+      };
       //
       //strokeWeight(20/sqrt(i+1));
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
 
       if (currentMatrix[i][j] == 1) {
-        arc(682+random_centers[i].x, 359+random_centers[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + random_rotations[i], (j+0.9)*2*PI/numcols + random_rotations[i]);
+        arc(682+rotating_centers[i].x, 359+rotating_centers[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + random_rotations[i], (j+0.9)*2*PI/numcols + random_rotations[i]);
       }
     }
   }
 
   for (let i = 0, len = numrows; i < len; i++) {
+    arrayCopy(currentMatrix[i], prevMatrix[i]);
     arrayCopy(nextMatrix[i], currentMatrix[i]);
   }
 
@@ -169,8 +184,10 @@ function draw() {
   }
 
   for (let i = 0, len = numrows; i < len; i++) {
-    random_centers[i].x+= random(0.2* RANDOM_CENTER_DISPLACEMENT_X) - 0.1 * RANDOM_CENTER_DISPLACEMENT_X;
-    random_centers[i].y+= random(0.2* RANDOM_CENTER_DISPLACEMENT_Y) - 0.1 * RANDOM_CENTER_DISPLACEMENT_Y;
+    // rotating_centers[i].x+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_X) - 0.1 * RANDOM_CENTER_DISPLACEMENT_X;
+    // rotating_centers[i].y+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_Y) - 0.1 * RANDOM_CENTER_DISPLACEMENT_Y;
+    rotating_centers[i].x= sin(frameCount * PI/128)*RANDOM_CENTER_DISPLACEMENT_X;
+    rotating_centers[i].y= cos(frameCount * PI/128)*RANDOM_CENTER_DISPLACEMENT_Y;
   }
 
 
