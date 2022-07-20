@@ -8,6 +8,9 @@ function setup() {
   // Global image setup
   background('rgb(5,5,5)');
   ROTATE_CONFIG = true;
+  ELEMENT_PERTUBATEUR = true;
+  PERTURBATION_DENSITY = 0.002;
+  PERTURBATION_PERIOD= 20;
 
 
   // Game of life display setup
@@ -39,12 +42,12 @@ function setup() {
   MasseImpact2 = { genesisRule: [0,4,2], survivalRule: [0,1,2,3] };
 
   Assimilation = { startDensity: 0.02, genesisRule: [2,5], survivalRule: [2,3,6] };
-  Dissimilation = { startDensity: 0.000000000002, backgroundFade: '0.5', genesisRule: [1], survivalRule: [2,3,4] };
+  Dissimilation = { startDensity: 0.000000000002, genesisRule: [1], survivalRule: [2,3,4] };
 
   Reject = { startDensity: 0.18, genesisRule: [3,4,5], survivalRule: [4,5,6,7] };
   Experiment626 = { startDensity : 0.008, genesisRule: [1,4], survivalRule: [2] };
 
-  configs = { DiscoCrystal, Classic, Reject, Assimilation };
+  configs = { DiscoCrystal, Classic, Dissimilation };
   currentConfig = "DiscoCrystal";
   currentConfig = "Reject";
   currentConfig = "Classic";
@@ -152,6 +155,7 @@ function draw() {
       // Checking the Rules of life to create the nextMatrix
       nextMatrix[i][j] = 0;
 
+
       if (currentMatrix[i][j] == 0) {
         if (checkRules(neighboursCount, genesisRule)) {
           nextMatrix[i][j] = 1;
@@ -165,7 +169,7 @@ function draw() {
 
       //stroke(230 + random(25));
 
-      cellHue = int(random(10, 230));
+      cellHue = int(random(120, 320));
       cellSaturation = int(random(20, 140));
       cellBrightness = int(random(2, 140));
       cellAlpha = int(random(2, 10));
@@ -177,6 +181,17 @@ function draw() {
       } else {
         stroke(10, cellSaturation / 8, max(50, cellBrightness / 2), cellAlpha / 4);
       };
+
+      if (ELEMENT_PERTUBATEUR) {
+        if (frameCount % PERTURBATION_PERIOD == 0) {
+          if (random(1) < PERTURBATION_DENSITY) {
+            currentMatrix[i][j] = 1;
+            console.log("Pertubation!");
+            stroke(8, 250, 230, 0.9);
+          }
+        } 
+      };
+ 
       //
       //strokeWeight(20/sqrt(i+1));
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
@@ -202,6 +217,7 @@ function draw() {
     rotating_centers[i].x= sin(frameCount * PI/128)*RANDOM_CENTER_DISPLACEMENT_X;
     rotating_centers[i].y= cos(frameCount * PI/128)*RANDOM_CENTER_DISPLACEMENT_Y;
   }
+
 
 
 }
