@@ -1,7 +1,7 @@
 function setup() {
 
   // Library setup
-  createCanvas(1376, 778);
+  createCanvas( window.screen.width, window.screen.height);
   frameRate(10);
   colorMode(HSB);
 
@@ -13,7 +13,10 @@ function setup() {
   numrows = 20;
   numcols = 64;
   // squareres = 12; // Used for classic matrix display; currently not maintained
-  radius = 82;
+  //radius = 82;
+  radius = max(window.screen.width, window.screen.height) / numrows;
+  CENTER_X = window.screen.width / 2;
+  CENTER_Y = window.screen.height / 2;
 
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
@@ -42,8 +45,8 @@ function setup() {
 
   configs = { DiscoCrystal, Classic, Experiment626, Reject, Assimilation, Dissimilation, MasseImpact5, MasseImpact1, MasseImpact2 };
   currentConfig = "DiscoCrystal";
-  currentConfig = "Classic";
   currentConfig = "Reject";
+  currentConfig = "Classic";
 
   loadConfig(currentConfig);
 
@@ -169,7 +172,7 @@ function draw() {
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
 
       if (currentMatrix[i][j] == 1) {
-        arc(682+rotating_centers[i].x, 359+rotating_centers[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + random_rotations[i], (j+0.9)*2*PI/numcols + random_rotations[i]);
+        arc(CENTER_X+rotating_centers[i].x, CENTER_Y+rotating_centers[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + random_rotations[i], (j+0.9)*2*PI/numcols + random_rotations[i]);
       }
     }
   }
