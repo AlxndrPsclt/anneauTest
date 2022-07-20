@@ -2,11 +2,11 @@ function setup() {
 
   // Library setup
   createCanvas( window.screen.width * window.devicePixelRatio, window.screen.height* window.devicePixelRatio);
+  noCursor();
   frameRate(10);
   colorMode(HSB);
 
   // Global image setup
-  background('rgb(5,5,5)');
   ROTATE_CONFIG = true;
   CONFIG_CHANGE_RANDOM_PERIOD = 200;
   ELEMENT_PERTUBATEUR = true;
@@ -26,10 +26,11 @@ function setup() {
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
   BACKGROUND_FADE = '0.05';
-  refreshColor = `rgba(2,2,2,${BACKGROUND_FADE})`;
+  refreshColor = `rgba(0,0,0,${BACKGROUND_FADE})`;
   RANDOM_CENTER_DISPLACEMENT_X=30;
   RANDOM_CENTER_DISPLACEMENT_Y=30;
 
+  background(refreshColor);
 
   // CONFIGS
 
@@ -215,8 +216,8 @@ function draw() {
   for (let i = 0, len = numrows; i < len; i++) {
     // rotating_centers[i].x+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_X) - 0.1 * RANDOM_CENTER_DISPLACEMENT_X;
     // rotating_centers[i].y+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_Y) - 0.1 * RANDOM_CENTER_DISPLACEMENT_Y;
-    rotating_centers[i].x= sin(frameCount * PI/128)*RANDOM_CENTER_DISPLACEMENT_X;
-    rotating_centers[i].y= cos(frameCount * PI/128)*RANDOM_CENTER_DISPLACEMENT_Y;
+    rotating_centers[i].x= sin((frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_X;
+    rotating_centers[i].y= cos((frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_Y;
   }
 
 
