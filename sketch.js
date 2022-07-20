@@ -67,15 +67,15 @@ function setup() {
     random_strokes.push(random(2.5*i));
   }
 
-  random_rotations =[];
+  circles_rotations =[];
   for (let i = 0, len = numrows; i < len; i++) {
-    random_rotations.push(random(2*i*PI/(8*numrows)));
+    circles_rotations.push({ direction: random([-1,1]), value: random(2*i*PI/(8*numrows))});
   }
 
-  rotating_centers =[];
+  centers_rotations =[];
   for (let i = 0, len = numrows; i < len; i++) {
-    rotating_centers.push( { x: 0, y: 0, direction: random([-1, 1]) } );
-    //rotating_centers.push( { x: random(RANDOM_CENTER_DISPLACEMENT_X)-RANDOM_CENTER_DISPLACEMENT_X, y: random(RANDOM_CENTER_DISPLACEMENT_Y)-RANDOM_CENTER_DISPLACEMENT_Y } );
+    centers_rotations.push( { x: 0, y: 0, direction: random([-1, 1]) } );
+    //centers_rotations.push( { x: random(RANDOM_CENTER_DISPLACEMENT_X)-RANDOM_CENTER_DISPLACEMENT_X, y: random(RANDOM_CENTER_DISPLACEMENT_Y)-RANDOM_CENTER_DISPLACEMENT_Y } );
   }
 
   // Initialise to random matrix
@@ -199,7 +199,7 @@ function draw() {
       strokeWeight(10/sqrt(i+1) + random_strokes[i]);
 
       if (currentMatrix[i][j] == 1) {
-        arc(CENTER_X+rotating_centers[i].x, CENTER_Y+rotating_centers[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + random_rotations[i], (j+0.9)*2*PI/numcols + random_rotations[i]);
+        arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
       }
     }
   }
@@ -210,14 +210,14 @@ function draw() {
   }
 
   for (let i = 0, len = numrows; i < len; i++) {
-    random_rotations[i]+= random((i/5)*2*PI/(512*numrows));
+    circles_rotations[i].value+= circles_rotations[i].direction * random(i*2*PI/(512*numrows));
   }
 
   for (let i = 0, len = numrows; i < len; i++) {
-    // rotating_centers[i].x+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_X) - 0.1 * RANDOM_CENTER_DISPLACEMENT_X;
-    // rotating_centers[i].y+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_Y) - 0.1 * RANDOM_CENTER_DISPLACEMENT_Y;
-    rotating_centers[i].x= sin(rotating_centers[i].direction * (frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_X;
-    rotating_centers[i].y= cos(rotating_centers[i].direction * (frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_Y;
+    // centers_rotations[i].x+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_X) - 0.1 * RANDOM_CENTER_DISPLACEMENT_X;
+    // centers_rotations[i].y+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_Y) - 0.1 * RANDOM_CENTER_DISPLACEMENT_Y;
+    centers_rotations[i].x= sin(centers_rotations[i].direction * (frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_X;
+    centers_rotations[i].y= cos(centers_rotations[i].direction * (frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_Y;
   }
 
 
