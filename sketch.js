@@ -8,8 +8,9 @@ function setup() {
   // Global image setup
   background('rgb(5,5,5)');
   ROTATE_CONFIG = true;
+  CONFIG_CHANGE_RANDOM_PERIOD = 200;
   ELEMENT_PERTUBATEUR = true;
-  PERTURBATION_DENSITY = 0.002;
+  PERTURBATION_DENSITY = 0.02;
   PERTURBATION_PERIOD= 20;
 
 
@@ -24,7 +25,7 @@ function setup() {
 
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
-  BACKGROUND_FADE = '0.02';
+  BACKGROUND_FADE = '0.05';
   refreshColor = `rgba(2,2,2,${BACKGROUND_FADE})`;
   RANDOM_CENTER_DISPLACEMENT_X=30;
   RANDOM_CENTER_DISPLACEMENT_Y=30;
@@ -136,7 +137,7 @@ function draw() {
 
   //clear();
   if (ROTATE_CONFIG) {
-    if(frameCount % 50 == 0) {
+    if(frameCount % int(random(CONFIG_CHANGE_RANDOM_PERIOD)) == 0) {
       newConfig=randomPropertyName(configs);
       loadConfig(newConfig);
       console.log(`Loaded a new config: ${newConfig}.`);
@@ -172,7 +173,7 @@ function draw() {
       cellHue = int(random(160, 280));
       cellSaturation = int(random(20, 140));
       cellBrightness = int(random(2, 140));
-      cellAlpha = int(random([1,5]));
+      cellAlpha = random(0.5);
 
       // strokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${BACKGROUND_FADE})`;
       // stroke(strokeColor);
@@ -187,7 +188,7 @@ function draw() {
           if (random(1) < PERTURBATION_DENSITY) {
             currentMatrix[i][j] = 1;
             console.log("Pertubation!");
-            stroke(8, 250, 230, 0.9);
+            stroke(334, 83, 75, 0.8);
           }
         } 
       };
