@@ -15,7 +15,7 @@ function setup() {
 
   // Game of life display setup
   numrows = 20;
-  numcols = 64;
+  numcols = 32;
   // squareres = 12; // Used for classic matrix display; currently not maintained
   //radius = 82;
   radius = max(window.screen.width* window.devicePixelRatio, window.screen.height * window.devicePixelRatio) / numrows;
@@ -24,8 +24,8 @@ function setup() {
 
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
-  backgroundFade = '0.2';
-  refreshColor = `rgba(2,2,2,${backgroundFade})`;
+  BACKGROUND_FADE = '0.02';
+  refreshColor = `rgba(2,2,2,${BACKGROUND_FADE})`;
   RANDOM_CENTER_DISPLACEMENT_X=30;
   RANDOM_CENTER_DISPLACEMENT_Y=30;
 
@@ -169,12 +169,12 @@ function draw() {
 
       //stroke(230 + random(25));
 
-      cellHue = int(random(120, 320));
+      cellHue = int(random(160, 280));
       cellSaturation = int(random(20, 140));
       cellBrightness = int(random(2, 140));
-      cellAlpha = int(random(2, 10));
+      cellAlpha = int(random([1,5]));
 
-      // strokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${backgroundFade})`;
+      // strokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${BACKGROUND_FADE})`;
       // stroke(strokeColor);
       if (currentMatrix[i][j] == 1 && prevMatrix[i][j] == 0) {
         stroke(cellHue, cellSaturation, cellBrightness, cellAlpha);
