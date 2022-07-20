@@ -1,12 +1,13 @@
 function setup() {
 
   // Library setup
-  createCanvas( window.screen.width, window.screen.height);
+  createCanvas( window.screen.width * window.devicePixelRatio, window.screen.height* window.devicePixelRatio);
   frameRate(10);
   colorMode(HSB);
 
   // Global image setup
   background('rgb(5,5,5)');
+  ROTATE_CONFIG = true;
 
 
   // Game of life display setup
@@ -14,9 +15,9 @@ function setup() {
   numcols = 64;
   // squareres = 12; // Used for classic matrix display; currently not maintained
   //radius = 82;
-  radius = max(window.screen.width, window.screen.height) / numrows;
-  CENTER_X = window.screen.width / 2;
-  CENTER_Y = window.screen.height / 2;
+  radius = max(window.screen.width* window.devicePixelRatio, window.screen.height * window.devicePixelRatio) / numrows;
+  CENTER_X = window.screen.width * window.devicePixelRatio / 2;
+  CENTER_Y = window.screen.height * window.devicePixelRatio / 2;
 
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
@@ -43,7 +44,7 @@ function setup() {
   Reject = { startDensity: 0.18, genesisRule: [3,4,5], survivalRule: [4,5,6,7] };
   Experiment626 = { startDensity : 0.008, genesisRule: [1,4], survivalRule: [2] };
 
-  configs = { DiscoCrystal, Classic, Experiment626, Reject, Assimilation, Dissimilation, MasseImpact5, MasseImpact1, MasseImpact2 };
+  configs = { DiscoCrystal, Classic, Reject, Assimilation };
   currentConfig = "DiscoCrystal";
   currentConfig = "Reject";
   currentConfig = "Classic";
@@ -123,13 +124,22 @@ function checkRules(neighboursCount, rules) {
   return trial;
 }
 
+var randomPropertyName = function (obj) {
+  var keys = Object.keys(obj);
+  return keys[ keys.length * Math.random() << 0];
+};
 
 function draw() {
 
   //clear();
-  //if(frameCount > 20) {
-  //  loadConfig('DiscoCrystal');
-  //}
+  if (ROTATE_CONFIG) {
+    if(frameCount % 50 == 0) {
+      newConfig=randomPropertyName(configs);
+      loadConfig(newConfig);
+      console.log(`Loaded a new config: ${newConfig}.`);
+      console.log(newConfig);
+    }
+  };
 
   background(refreshColor);
   noFill();
