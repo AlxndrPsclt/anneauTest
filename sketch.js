@@ -13,7 +13,7 @@ function setup() {
   PERTURBATION_DENSITY = 0.02;
   PERTURBATION_PERIOD= 20;
 
-  SQUARE_SIZE = 40;
+  SQUARE_SIZE = 30;
 
 
   // Game of life display setup
@@ -64,28 +64,6 @@ function setup() {
 
   loadConfig(currentConfig);
 
-  // Randomness arrays generation
-  random_radiuses =[];
-  for (let i = 0, len = numrows; i < len; i++) {
-    random_radiuses.push(random(10)+random(log(100000*i)));
-  }
-
-  random_strokes =[];
-  for (let i = 0, len = numrows; i < len; i++) {
-    random_strokes.push(random(2.5*i));
-  }
-
-  circles_rotations =[];
-  for (let i = 0, len = numrows; i < len; i++) {
-    circles_rotations.push({ direction: random([-1,1]), value: random(2*i*PI/(8*numrows))});
-  }
-
-  centers_rotations =[];
-  for (let i = 0, len = numrows; i < len; i++) {
-    centers_rotations.push( { x: 0, y: 0, direction: random([-1, 1]) } );
-    //centers_rotations.push( { x: random(RANDOM_CENTER_DISPLACEMENT_X)-RANDOM_CENTER_DISPLACEMENT_X, y: random(RANDOM_CENTER_DISPLACEMENT_Y)-RANDOM_CENTER_DISPLACEMENT_Y } );
-  }
-
   // Initialise to random matrix
   currentMatrix = [];
   for (let i = 0, len = numrows; i < len; i++) {
@@ -96,7 +74,7 @@ function setup() {
       } else {
         currentMatrix[i].push(0);
       }
-    } 
+    }
   };
 
   nextMatrix = [];
@@ -104,7 +82,7 @@ function setup() {
     nextMatrix.push([]);
     for (let j = 0, len2 = numcols; j < len2; j++) {
       nextMatrix[i].push(0);
-    } 
+    }
   };
 
   prevMatrix = [];
@@ -112,7 +90,15 @@ function setup() {
     prevMatrix.push([]);
     for (let j = 0, len2 = numcols; j < len2; j++) {
       prevMatrix[i].push(0);
-    } 
+    }
+  };
+
+  ageMatrix = [];
+  for (let i = 0, len = numrows; i < len; i++) {
+    ageMatrix.push([]);
+    for (let j = 0, len2 = numcols; j < len2; j++) {
+      ageMatrix[i].push(0);
+    }
   };
 }
 
@@ -145,17 +131,8 @@ var randomPropertyName = function (obj) {
 function draw() {
 
   //clear();
-  if (ROTATE_CONFIG) {
-    if(frameCount % int(random(CONFIG_CHANGE_RANDOM_PERIOD)) == 0) {
-      newConfig=randomPropertyName(configs);
-      loadConfig(newConfig);
-      console.log(`Loaded a new config: ${newConfig}.`);
-      console.log(newConfig);
-    }
-  };
-
   background(refreshColor);
-  noFill();
+  //noFill();
 
   for (let i = 0, len = currentMatrix.length; i < len; i++) {
     for (let j = 0, len2 = currentMatrix[i].length; j < len2; j++) {
@@ -179,38 +156,32 @@ function draw() {
 
       //stroke(230 + random(25));
 
-      cellHue = int(random(220, 240));
+      if (ageMatrix[i][j] > 30) {
+        cellHue = int(random(10, 50));
+      } else {
+        cellHue = int(random(220, 240));
+      }
       cellSaturation = int(random(100, 140));
       cellBrightness = int(random(130, 190));
-      cellAlpha = random(0.5);
+      cellAlpha = random(0.4,0.9);
 
       // s+5)trokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${BACKGROUND_FADE})`;
       // stroke(strokeColor);
-      if (currentMatrix[i][j] == 1 && prevMatrix[i][j] == 0) {
+      if (currentMatrix[i][j] == 1) {
         stroke(cellHue, cellSaturation, cellBrightness, cellAlpha);
         fill(cellHue, cellSaturation, cellBrightness, cellAlpha);
+        ageMatrix[i][j]+=1;
       } else {
-        stroke(10, cellSaturation, max(10, cellBrightness), cellAlpha / 8);
-      };
-
-      if (ELEMENT_PERTUBATEUR) {
-        if (frameCount % PERTURBATION_PERIOD == 0) {
-          if (random(1) < PERTURBATION_DENSITY) {
-            currentMatrix[i][j] = 1;
-            console.log("Pertubation!");
-            stroke(334, 83, 75, 0.8);
-          }
-        } 
-      };
- 
+        ageMatrix[i][j]=0;
+      }
       //
       //strokeWeight(20/sqrt(i+1));
-      strokeWeight(random(20));
+      strokeWeight(random(8));
 
       if (currentMatrix[i][j] == 1) {
         //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
 
-        square(i*(SQUARE_SIZE+20), j*SQUARE_SIZE, SQUARE_SIZE);
+        square(j*(SQUARE_SIZE), i*SQUARE_SIZE, SQUARE_SIZE);
 
         //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
       }
@@ -220,17 +191,6 @@ function draw() {
   for (let i = 0, len = numrows; i < len; i++) {
     arrayCopy(currentMatrix[i], prevMatrix[i]);
     arrayCopy(nextMatrix[i], currentMatrix[i]);
-  }
-
-  for (let i = 0, len = numrows; i < len; i++) {
-    circles_rotations[i].value+= circles_rotations[i].direction * random(i*2*PI/(512*numrows));
-  }
-
-  for (let i = 0, len = numrows; i < len; i++) {
-    // centers_rotations[i].x+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_X) - 0.1 * RANDOM_CENTER_DISPLACEMENT_X;
-    // centers_rotations[i].y+= 0.2 * random(RANDOM_CENTER_DISPLACEMENT_Y) - 0.1 * RANDOM_CENTER_DISPLACEMENT_Y;
-    centers_rotations[i].x= sin(centers_rotations[i].direction * (frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_X;
-    centers_rotations[i].y= cos(centers_rotations[i].direction * (frameCount + 10 * i) * PI/128)*RANDOM_CENTER_DISPLACEMENT_Y;
   }
 
 
