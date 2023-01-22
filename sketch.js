@@ -173,20 +173,38 @@ function mouseReleased() {
 
 
 function touchStarted() {
+  clickedCellX = int(mouseX / SQUARE_SIZE);
+  clickedCellY = int(mouseY / SQUARE_SIZE);
+  //prevMatrix[clickedCellY][clickedCellX]=1;
+  drawMatrix[clickedCellY][clickedCellX]=1;
+  //nextMatrix[clickedCellY][clickedCellX]=1;
   stroke(150, cellSaturation, cellBrightness, cellAlpha);
   fill(150, cellSaturation, cellBrightness, cellAlpha);
   square(10*(SQUARE_SIZE), 10*SQUARE_SIZE, SQUARE_SIZE, 10, 10, 10);
+  return false;
 }
 
 function touchMoved() {
+  clickedCellX = int(mouseX / SQUARE_SIZE);
+  clickedCellY = int(mouseY / SQUARE_SIZE);
+  //prevMatrix[clickedCellY][clickedCellX]=1;
+  drawMatrix[clickedCellY][clickedCellX]=1;
+  //nextMatrix[clickedCellY][clickedCellX]=1;
   stroke(150, cellSaturation, cellBrightness, cellAlpha);
   fill(150, cellSaturation, cellBrightness, cellAlpha);
   square(10*(SQUARE_SIZE), 10*SQUARE_SIZE, SQUARE_SIZE, 10, 10, 10);
+  return false;
 }
 function touchEnded() {
+  clickedCellX = int(mouseX / SQUARE_SIZE);
+  clickedCellY = int(mouseY / SQUARE_SIZE);
+  //prevMatrix[clickedCellY][clickedCellX]=1;
+  drawMatrix[clickedCellY][clickedCellX]=1;
+  //nextMatrix[clickedCellY][clickedCellX]=1;
   stroke(150, cellSaturation, cellBrightness, cellAlpha);
   fill(150, cellSaturation, cellBrightness, cellAlpha);
   square(10*(SQUARE_SIZE), 10*SQUARE_SIZE, SQUARE_SIZE, 10, 10, 10);
+  return false;
 }
 
 function draw() {
