@@ -7,9 +7,9 @@ function setup() {
   colorMode(HSB);
 
   // Global image setup
-  ROTATE_CONFIG = true;
+  ROTATE_CONFIG = false;
   CONFIG_CHANGE_RANDOM_PERIOD = 200;
-  ELEMENT_PERTUBATEUR = true;
+  ELEMENT_PERTUBATEUR = false;
   PERTURBATION_DENSITY = 0.02;
   PERTURBATION_PERIOD= 20;
 
@@ -179,7 +179,7 @@ function draw() {
 
       //stroke(230 + random(25));
 
-      cellHue = int(random(160, 280));
+      cellHue = int(random(220, 240));
       cellSaturation = int(random(20, 140));
       cellBrightness = int(random(2, 140));
       cellAlpha = random(0.5);
@@ -188,8 +188,9 @@ function draw() {
       // stroke(strokeColor);
       if (currentMatrix[i][j] == 1 && prevMatrix[i][j] == 0) {
         stroke(cellHue, cellSaturation, cellBrightness, cellAlpha);
+        fill(cellHue, cellSaturation, cellBrightness, cellAlpha);
       } else {
-        stroke(10, cellSaturation, max(20, cellBrightness), cellAlpha / 8);
+        stroke(10, cellSaturation, max(10, cellBrightness), cellAlpha / 8);
       };
 
       if (ELEMENT_PERTUBATEUR) {
@@ -204,7 +205,7 @@ function draw() {
  
       //
       //strokeWeight(20/sqrt(i+1));
-      strokeWeight(random(30));
+      strokeWeight(random(20));
 
       if (currentMatrix[i][j] == 1) {
         //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
