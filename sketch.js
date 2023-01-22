@@ -2,7 +2,7 @@ function setup() {
 
   // Library setup
   createCanvas( window.screen.width * window.devicePixelRatio, window.screen.height* window.devicePixelRatio);
-  noCursor();
+  //noCursor();
   frameRate(5);
   colorMode(HSB);
 
@@ -100,6 +100,15 @@ function setup() {
       ageMatrix[i].push(0);
     }
   };
+
+  drawMatrix = [];
+  for (let i = 0, len = numrows; i < len; i++) {
+    drawMatrix.push([]);
+    for (let j = 0, len2 = numcols; j < len2; j++) {
+      drawMatrix[i].push(0);
+    }
+  };
+
 }
 
 function loadConfig(configName) {
@@ -127,6 +136,38 @@ var randomPropertyName = function (obj) {
   var keys = Object.keys(obj);
   return keys[ keys.length * Math.random() << 0];
 };
+
+function mousePressed() {
+  console.log("clicked");
+  clickedCellX = int(mouseX / SQUARE_SIZE);
+  clickedCellY = int(mouseY / SQUARE_SIZE);
+  //prevMatrix[clickedCellY][clickedCellX]=1;
+  drawMatrix[clickedCellY][clickedCellX]=1;
+  //nextMatrix[clickedCellY][clickedCellX]=1;
+  return false;
+}
+
+function mouseDragged() {
+  console.log("Dragged");
+  clickedCellX = int(mouseX / SQUARE_SIZE);
+  clickedCellY = int(mouseY / SQUARE_SIZE);
+  //prevMatrix[clickedCellY][clickedCellX]=1;
+  drawMatrix[clickedCellY][clickedCellX]=1;
+  //nextMatrix[clickedCellY][clickedCellX]=1;
+  return false;
+}
+
+function mouseReleased() {
+  console.log("Mouse released");
+  for (let i = 0, len = drawMatrix.length; i < len; i++) {
+    for (let j = 0, len2 = drawMatrix[i].length; j < len2; j++) {
+      if (drawMatrix[i][j] == 1) {
+        currentMatrix[i][j]=1;
+        drawMatrix[i][j]=0;
+      }
+    }
+  }
+}
 
 function draw() {
 
@@ -178,10 +219,16 @@ function draw() {
       //strokeWeight(20/sqrt(i+1));
       strokeWeight(random(8));
 
+      if (drawMatrix[i][j] == 1) {
+        stroke(150, cellSaturation, cellBrightness, cellAlpha);
+        fill(150, cellSaturation, cellBrightness, cellAlpha);
+        square(j*(SQUARE_SIZE), i*SQUARE_SIZE, SQUARE_SIZE, 10, 10, 10);
+      }
+
       if (currentMatrix[i][j] == 1) {
         //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
 
-        square(j*(SQUARE_SIZE), i*SQUARE_SIZE, SQUARE_SIZE);
+        square(j*(SQUARE_SIZE), i*SQUARE_SIZE, SQUARE_SIZE,10);
 
         //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
       }
