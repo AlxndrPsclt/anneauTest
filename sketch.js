@@ -13,16 +13,24 @@ function setup() {
   PERTURBATION_DENSITY = 0.02;
   PERTURBATION_PERIOD= 20;
 
+  SQUARE_SIZE = 40;
+
 
   // Game of life display setup
-  numrows = 20;
-  numcols = 32;
+  //numrows = 20;
+  //numcols = 32;
+
+  numrows = window.screen.height * window.devicePixelRatio / SQUARE_SIZE;
+  numcols = window.screen.width * window.devicePixelRatio / SQUARE_SIZE;
+  console.log(numrows);
+  console.log(numcols);
+
+
   // squareres = 12; // Used for classic matrix display; currently not maintained
   //radius = 82;
   radius = max(window.screen.width* window.devicePixelRatio, window.screen.height * window.devicePixelRatio) / numrows;
   CENTER_X = window.screen.width * window.devicePixelRatio / 2;
   CENTER_Y = window.screen.height * window.devicePixelRatio / 2;
-
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
   BACKGROUND_FADE = '0.05';
@@ -176,12 +184,12 @@ function draw() {
       cellBrightness = int(random(2, 140));
       cellAlpha = random(0.5);
 
-      // strokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${BACKGROUND_FADE})`;
+      // s+5)trokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${BACKGROUND_FADE})`;
       // stroke(strokeColor);
       if (currentMatrix[i][j] == 1 && prevMatrix[i][j] == 0) {
         stroke(cellHue, cellSaturation, cellBrightness, cellAlpha);
       } else {
-        stroke(10, cellSaturation / 8, max(50, cellBrightness / 2), cellAlpha / 4);
+        stroke(10, cellSaturation, max(20, cellBrightness), cellAlpha / 8);
       };
 
       if (ELEMENT_PERTUBATEUR) {
@@ -196,10 +204,14 @@ function draw() {
  
       //
       //strokeWeight(20/sqrt(i+1));
-      strokeWeight(10/sqrt(i+1) + random_strokes[i]);
+      strokeWeight(random(30));
 
       if (currentMatrix[i][j] == 1) {
-        arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
+        //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
+
+        square(i*(SQUARE_SIZE+32), j*SQUARE_SIZE, SQUARE_SIZE);
+
+        //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
       }
     }
   }
