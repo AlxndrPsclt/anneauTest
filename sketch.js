@@ -3,7 +3,7 @@ function setup() {
   // Library setup
   createCanvas( window.screen.width * window.devicePixelRatio, window.screen.height* window.devicePixelRatio);
   noCursor();
-  frameRate(10);
+  frameRate(5);
   colorMode(HSB);
 
   // Global image setup
@@ -33,7 +33,7 @@ function setup() {
   CENTER_Y = window.screen.height * window.devicePixelRatio / 2;
   // Default config; can be overrided later by a named, or custom config
   startDensity = 0.0005;
-  BACKGROUND_FADE = '0.05';
+  BACKGROUND_FADE = '1';
   refreshColor = `rgba(0,0,0,${BACKGROUND_FADE})`;
   RANDOM_CENTER_DISPLACEMENT_X=20;
   RANDOM_CENTER_DISPLACEMENT_Y=20;
@@ -180,8 +180,8 @@ function draw() {
       //stroke(230 + random(25));
 
       cellHue = int(random(220, 240));
-      cellSaturation = int(random(20, 140));
-      cellBrightness = int(random(2, 140));
+      cellSaturation = int(random(100, 140));
+      cellBrightness = int(random(130, 190));
       cellAlpha = random(0.5);
 
       // s+5)trokeColor = `rgba(${cellHue},${cellSaturation},${cellBrightness},${BACKGROUND_FADE})`;
@@ -210,7 +210,7 @@ function draw() {
       if (currentMatrix[i][j] == 1) {
         //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
 
-        square(i*(SQUARE_SIZE+32), j*SQUARE_SIZE, SQUARE_SIZE);
+        square(i*(SQUARE_SIZE+20), j*SQUARE_SIZE, SQUARE_SIZE);
 
         //arc(CENTER_X+centers_rotations[i].x, CENTER_Y+centers_rotations[i].y, radius*(i+1) + random_radiuses[i], radius*(i+1) + random_radiuses[i], (j+0.1)*2*PI/numcols + circles_rotations[i].value, (j+0.9)*2*PI/numcols + circles_rotations[i].value);
       }
