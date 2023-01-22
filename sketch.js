@@ -147,6 +147,8 @@ function mousePressed() {
   return false;
 }
 
+touchStarted = mousePressed;
+
 function mouseDragged() {
   console.log("Dragged");
   clickedCellX = int(mouseX / SQUARE_SIZE);
