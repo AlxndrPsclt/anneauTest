@@ -171,6 +171,24 @@ function mouseReleased() {
   }
 }
 
+
+function touchStarted() {
+  stroke(150, cellSaturation, cellBrightness, cellAlpha);
+  fill(150, cellSaturation, cellBrightness, cellAlpha);
+  square(10*(SQUARE_SIZE), 10*SQUARE_SIZE, SQUARE_SIZE, 10, 10, 10);
+}
+
+function touchMoved() {
+  stroke(150, cellSaturation, cellBrightness, cellAlpha);
+  fill(150, cellSaturation, cellBrightness, cellAlpha);
+  square(10*(SQUARE_SIZE), 10*SQUARE_SIZE, SQUARE_SIZE, 10, 10, 10);
+}
+function touchEnded() {
+  stroke(150, cellSaturation, cellBrightness, cellAlpha);
+  fill(150, cellSaturation, cellBrightness, cellAlpha);
+  square(10*(SQUARE_SIZE), 10*SQUARE_SIZE, SQUARE_SIZE, 10, 10, 10);
+}
+
 function draw() {
 
   //clear();
